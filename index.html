@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Ngân hàng Niềm tin · The Trust Bank</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FFF4F5;
+  --card:#FFFFFF;
+  --shell:#FFDBE1;
+  --blush:#FFAEBB;
+  --rose:#D9294A;
+  --plum:#F02F4E;
+  --deep:#C21738;
+  --ink:#3A1D24;
+  --muted:#B0737F;
+  --r:18px;
+  --pad:20px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:"Be Vietnam Pro",system-ui,-apple-system,sans-serif;
+  font-size:16px;line-height:1.5;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+.wrap{max-width:520px;margin:0 auto;padding:14px var(--pad) 40px;position:relative}
+
+.eyebrow{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--rose);
+}
+h1,h2,h3{font-family:"Bricolage Grotesque","Be Vietnam Pro",sans-serif;font-weight:800;margin:0;line-height:1.05;letter-spacing:-.02em}
+h1{font-size:34px}
+h2{font-size:24px}
+.sub-lang{color:var(--muted);font-size:13.5px;line-height:1.45}
+.dashed{height:1px;background-image:linear-gradient(90deg,var(--blush) 0 6px,transparent 6px 12px);background-size:12px 1px;margin:16px 0}
+
+button{font-family:inherit;font-size:inherit;cursor:pointer;border:none;background:none;color:inherit}
+button:focus-visible,input:focus-visible{outline:2px solid var(--plum);outline-offset:2px}
+
+.btn{
+  display:block;width:100%;padding:15px 18px;border-radius:999px;
+  background:var(--plum);color:#fff;font-weight:600;font-size:16px;
+  transition:transform .12s ease,opacity .12s ease;
+  box-shadow:0 6px 16px rgba(240,47,78,.22);
+}
+.btn:active{transform:scale(.98)}
+.btn.ghost{background:transparent;color:var(--plum);border:1.5px solid var(--blush);box-shadow:none}
+.btn small{display:block;font-family:"IBM Plex Mono",monospace;font-weight:400;font-size:11px;opacity:.85;letter-spacing:.08em;margin-top:2px}
+
+.screen{display:none;animation:rise .32s ease both}
+.screen.active{display:block}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:14px}
+.mark{display:flex;align-items:center;gap:8px}
+.mark-glyph{
+  width:26px;height:26px;border-radius:7px;background:var(--plum);color:#fff;
+  display:grid;place-items:center;font-family:"IBM Plex Mono",monospace;font-size:13px;font-weight:600;
+}
+.mark-name{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.tools{display:flex;align-items:center;gap:7px}
+.lang{
+  display:flex;border:1px solid var(--blush);border-radius:999px;overflow:hidden;
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;
+}
+.lang button{padding:5px 11px;color:var(--muted)}
+.lang button.on{background:var(--plum);color:#fff}
+.snd{width:32px;height:26px;border:1px solid var(--blush);border-radius:999px;display:grid;place-items:center;font-size:13px;color:var(--plum)}
+.snd.off{color:var(--blush)}
+
+.account{
+  position:relative;border-radius:var(--r);padding:18px 18px 14px;color:#fff;
+  background:linear-gradient(145deg,#FF4A63 0%,var(--deep) 100%);overflow:hidden;
+}
+.account::after{
+  content:"";position:absolute;inset:0;opacity:.16;
+  background-image:repeating-linear-gradient(115deg,#fff 0 1px,transparent 1px 9px);
+  pointer-events:none;
+}
+.account .row{display:flex;justify-content:space-between;align-items:flex-end;position:relative;z-index:1}
+.acc-label{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;opacity:.75}
+.acc-holder{font-size:14px;font-weight:500;margin-top:2px}
+.balance{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:42px;line-height:1;letter-spacing:-.03em;display:inline-block}
+.balance.bump{animation:bump .45s cubic-bezier(.2,1.4,.4,1)}
+@keyframes bump{0%{transform:scale(1)}35%{transform:scale(1.18)}100%{transform:scale(1)}}
+.balance-unit{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;opacity:.75;margin-left:4px}
+.ticks{display:flex;gap:5px;margin-top:14px;position:relative;z-index:1}
+.tick{flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,.28)}
+.tick.up{background:#fff}
+.tick.down{background:rgba(255,255,255,.45);position:relative}
+.tick.down::after{content:"";position:absolute;inset:0;border:1px solid rgba(255,255,255,.9);border-radius:2px}
+.tick.now{box-shadow:0 0 0 2px rgba(255,255,255,.35)}
+
+.sc-card{
+  background:var(--card);border:1px solid var(--shell);border-radius:var(--r);
+  padding:18px;margin-top:14px;box-shadow:0 6px 20px rgba(240,47,78,.06);
+}
+.sc-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.sc-code{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;color:var(--rose)}
+.sc-lens{
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;
+  color:var(--rose);border:1px solid var(--shell);background:var(--paper);border-radius:999px;padding:3px 9px;
+}
+.sc-owner{border-top:1px solid var(--shell);border-bottom:1px solid var(--shell);padding:9px 0;margin-bottom:13px}
+.sc-owner .ol{font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--rose)}
+.sc-owner .on{font-weight:600;font-size:15px;margin-top:1px}
+.sc-primary{font-size:18.5px;line-height:1.42;font-weight:500}
+.sc-secondary{margin-top:10px;padding-top:10px;border-top:1px dashed var(--shell)}
+.q{margin:18px 0 12px;text-align:center}
+.q b{display:block;font-family:"Bricolage Grotesque",sans-serif;font-size:17px;font-weight:700}
+.q span{font-size:12.5px;color:var(--muted)}
+.choices{display:grid;gap:10px}
+.choice{
+  display:flex;align-items:center;gap:14px;width:100%;text-align:left;
+  padding:15px 16px;border-radius:14px;border:1.5px solid var(--blush);
+  background:var(--card);transition:transform .12s ease;
+}
+.choice:active{transform:scale(.985)}
+.choice .glyph{
+  width:38px;height:38px;flex:none;border-radius:11px;display:grid;place-items:center;
+  font-size:15px;font-weight:700;
+}
+.choice.dep .glyph{background:var(--plum);color:#fff}
+.choice.wit .glyph{background:transparent;color:var(--plum);border:1.5px solid var(--plum)}
+.choice .lbl{font-weight:600;font-size:16px;line-height:1.2}
+.choice .lbl small{display:block;font-weight:400;font-size:12.5px;color:var(--muted);margin-top:3px}
+.choice .amt{margin-left:auto;font-family:"IBM Plex Mono",monospace;font-size:14px;color:var(--rose)}
+.backlink{display:block;width:100%;text-align:center;margin-top:14px;font-size:13px;color:var(--muted)}
+
+.stamp{
+  position:fixed;inset:0;display:none;place-items:center;z-index:60;
+  background:rgba(58,29,36,.3);backdrop-filter:blur(2px);
+}
+.stamp.on{display:grid}
+.stamp-inner{
+  background:var(--card);border-radius:16px;padding:22px 26px;text-align:center;min-width:210px;
+  animation:pop .28s cubic-bezier(.2,1.2,.4,1) both;
+}
+@keyframes pop{from{opacity:0;transform:scale(.9) rotate(-3deg)}to{opacity:1;transform:none}}
+.stamp-amt{font-family:"IBM Plex Mono",monospace;font-size:32px;font-weight:600;color:var(--plum)}
+.stamp-txt{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+
+.receipt{
+  background:var(--card);border:1px solid var(--shell);padding:20px 18px;margin-top:14px;position:relative;
+  --tear:linear-gradient(45deg,transparent 33.33%,var(--card) 33.33% 66.66%,transparent 66.66%),
+         linear-gradient(-45deg,transparent 33.33%,var(--card) 33.33% 66.66%,transparent 66.66%);
+}
+.receipt::before,.receipt::after{
+  content:"";position:absolute;left:-1px;right:-1px;height:9px;background:var(--tear);background-size:14px 18px;
+}
+.receipt::before{top:-9px}
+.receipt::after{bottom:-9px;transform:scaleY(-1)}
+.rc-title{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-align:center}
+.rc-name{text-align:center;font-family:"Bricolage Grotesque",sans-serif;font-size:22px;font-weight:800;margin-top:6px}
+.rc-sub{text-align:center;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--rose);margin-top:3px}
+.rc-line{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--shell);font-size:13.5px}
+.rc-line .n{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--rose);width:22px;flex:none}
+.rc-line .d{flex:1;line-height:1.3}
+.rc-line .d em{display:block;font-style:normal;font-size:11px;color:var(--muted);font-family:"IBM Plex Mono",monospace;letter-spacing:.04em}
+.rc-line .v{font-family:"IBM Plex Mono",monospace;font-size:13px;width:44px;text-align:right;flex:none}
+.rc-line .v.up{color:var(--plum);font-weight:600}
+.rc-line .v.down{color:var(--muted)}
+.rc-total{display:flex;justify-content:space-between;align-items:baseline;padding-top:14px;margin-top:6px}
+.rc-total b{font-family:"IBM Plex Mono",monospace;font-size:26px;font-weight:600;color:var(--plum)}
+.rc-foot{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;color:var(--muted);text-align:center;margin-top:14px}
+
+.rv{background:var(--card);border:1px solid var(--shell);border-radius:14px;padding:14px 15px;margin-top:10px}
+.rv-top{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.rv-n{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--rose)}
+.rv-txt{font-size:14px;line-height:1.45}
+.rv-why{font-size:13.5px;color:var(--muted);margin-top:8px;padding-top:8px;border-top:1px dashed var(--shell)}
+.rv-why b{color:var(--plum);font-weight:600}
+.pill-row{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap}
+.pill{font-family:"IBM Plex Mono",monospace;font-size:10.5px;padding:4px 9px;border-radius:999px;background:var(--shell);color:var(--deep)}
+.pill.hollow{background:transparent;border:1px solid var(--shell);color:var(--muted)}
+
+.disc{background:var(--card);border:1px solid var(--shell);border-radius:var(--r);padding:6px 18px 18px;margin-top:16px}
+.disc ol{margin:10px 0 0;padding-left:22px}
+.disc li{margin-bottom:16px;font-size:15.5px;line-height:1.45}
+.disc li::marker{color:var(--plum);font-family:"IBM Plex Mono",monospace;font-weight:600}
+.disc li em{display:block;font-style:normal;font-size:13px;color:var(--muted);margin-top:4px}
+
+.fac-open{position:fixed;right:10px;bottom:10px;z-index:50;width:34px;height:34px;border-radius:50%;background:var(--shell);color:var(--rose);font-family:"IBM Plex Mono",monospace;font-size:11px;display:grid;place-items:center;opacity:.7}
+.fac{position:fixed;inset:0;background:var(--paper);z-index:80;display:none;overflow-y:auto}
+.fac.on{display:block}
+.fac h3{font-size:16px;margin:18px 0 8px}
+.fac p,.fac li{font-size:14px;line-height:1.5}
+.fac table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+.fac td,.fac th{border-bottom:1px solid var(--shell);padding:7px 4px;text-align:left;vertical-align:top}
+.fac th{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--rose);font-weight:400}
+.key-up{color:var(--plum);font-weight:700}
+.key-down{color:var(--muted);font-weight:700}
+
+.name-input{
+  width:100%;padding:14px 16px;border-radius:14px;border:1.5px solid var(--blush);
+  background:var(--card);font-size:16px;font-family:inherit;margin-top:10px;
+}
+.name-input::placeholder{color:var(--blush)}
+
+.cover-card{margin-top:18px}
+.cover-list{margin:14px 0 0;padding:0;list-style:none}
+.cover-list li{display:flex;gap:11px;font-size:14.5px;padding:9px 0;border-bottom:1px dashed var(--shell);line-height:1.4}
+.cover-list li:last-child{border-bottom:none}
+.cover-list .k{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--rose);padding-top:3px;flex:none}
+.cover-list em{display:block;font-style:normal;font-size:12.5px;color:var(--muted)}
+
+.idea{background:var(--shell);border-radius:var(--r);padding:16px 18px;margin-top:16px}
+.idea .big{font-size:16px;font-weight:600;line-height:1.4;color:var(--deep)}
+.idea .small{font-size:13.5px;color:var(--rose);margin-top:8px;line-height:1.45}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="mark">
+      <div class="mark-glyph">₮</div>
+      <div class="mark-name">Ngân hàng Niềm tin<br>The Trust Bank</div>
+    </div>
+    <div class="tools">
+      <button class="snd" id="snd" onclick="toggleSound()" title="Sound">🔊</button>
+      <div class="lang">
+        <button id="btn-vi" class="on" onclick="setLang('vi')">VI</button>
+        <button id="btn-en" onclick="setLang('en')">EN</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ COVER ============ -->
+  <section id="s-cover" class="screen active">
+    <div class="eyebrow" data-vi="Khởi động · Building Trust" data-en="Warm-up · Building Trust"></div>
+    <h1 style="margin-top:8px" data-vi="Mỗi người là một tài khoản." data-en="Every person is an account."></h1>
+    <p class="sub-lang" style="margin-top:12px" data-vi="Với mỗi đồng nghiệp, bạn đang giữ một tài khoản niềm tin mang tên họ. Mỗi hành vi của họ là một giao dịch trên tài khoản đó — làm số dư tăng lên hoặc giảm xuống." data-en="For every colleague, you hold a trust account in their name. Each thing they do is a transaction on that account — the balance goes up, or it goes down."></p>
+
+    <div class="sc-card cover-card">
+      <div class="eyebrow" data-vi="Vào quầy giao dịch" data-en="Step up to the counter"></div>
+      <input id="name" class="name-input" maxlength="18" placeholder="Tên của bạn / Your name">
+      <button class="btn" style="margin-top:12px" onclick="unlockAudio();go('rules')">
+        <span data-vi="Bắt đầu" data-en="Start"></span>
+        <small>6 SITUATIONS · ~6 MIN</small>
+      </button>
+      <p class="sub-lang" style="margin-top:12px;text-align:center" data-vi="Bật loa để nghe tiếng “ting” mỗi lần nạp hoặc rút." data-en="Turn your volume on to hear the ting on every deposit or withdrawal."></p>
+    </div>
+  </section>
+
+  <!-- ============ RULES ============ -->
+  <section id="s-rules" class="screen">
+    <div class="eyebrow" data-vi="Cách chơi" data-en="How to play"></div>
+    <h2 style="margin-top:8px" data-vi="Đây là Ngân hàng Niềm tin." data-en="This is The Trust Bank."></h2>
+
+    <div class="idea">
+      <div class="big" data-vi="Mỗi người trong tình huống có một tài khoản niềm tin mang tên họ, do bạn nắm giữ.<br><br>Họ làm điều khiến bạn tin họ hơn → bạn NẠP vào tài khoản của họ.<br>Họ làm điều khiến bạn tin họ ít đi → bạn RÚT ra." data-en="Each person in the situations has a trust account in their name, and you are the one holding it.<br><br>They do something that makes you trust them more → you DEPOSIT into their account.<br>Something that makes you trust them less → you WITHDRAW."></div>
+      <div class="small" data-vi="Mục tiêu: nhìn ra chính xác những hành vi nào đang âm thầm cộng, và những hành vi nào đang âm thầm trừ niềm tin nơi công sở." data-en="The point: to see exactly which everyday behaviours quietly add to trust at work, and which quietly take it away."></div>
+    </div>
+
+    <div class="sc-card">
+      <ul class="cover-list">
+        <li><span class="k">01</span><span>
+          <span data-vi="Đọc tình huống, chọn một trong hai. Không có nút bỏ qua." data-en="Read the situation, pick one of two. There is no skip button."></span>
+        </span></li>
+        <li><span class="k">02</span><span>
+          <span data-vi="Nạp niềm tin = +10. Rút niềm tin = −10." data-en="Deposit trust = +10. Withdraw trust = −10."></span>
+          <em data-vi="Số dư chạy từ −60 đến +60." data-en="Balance runs from −60 to +60."></em>
+        </span></li>
+      </ul>
+    </div>
+
+    <button class="btn" style="margin-top:16px" onclick="unlockAudio();startPlay()">
+      <span data-vi="Bắt đầu giao dịch" data-en="Start transactions"></span>
+    </button>
+    <button class="backlink" onclick="go('cover')" data-vi="Quay lại" data-en="Back"></button>
+  </section>
+
+  <!-- ============ PLAY ============ -->
+  <section id="s-play" class="screen">
+    <div class="account">
+      <div class="row">
+        <div>
+          <div class="acc-label" data-vi="Người giao dịch" data-en="Teller"></div>
+          <div class="acc-holder" id="acc-holder">—</div>
+        </div>
+        <div style="text-align:right">
+          <div class="acc-label" data-vi="Tổng phiên" data-en="Session total"></div>
+          <div><span class="balance" id="bal">0</span><span class="balance-unit">TÍN</span></div>
+        </div>
+      </div>
+      <div class="ticks" id="ticks"></div>
+    </div>
+
+    <div class="sc-card">
+      <div class="sc-head">
+        <span class="sc-code" id="sc-code">TK·01</span>
+        <span class="sc-lens" id="sc-lens">—</span>
+      </div>
+      <div class="sc-owner">
+        <div class="ol" id="sc-ownerlabel">Tài khoản niềm tin của</div>
+        <div class="on" id="sc-owner">—</div>
+      </div>
+      <div class="sc-primary" id="sc-primary"></div>
+      <div class="sc-secondary sub-lang" id="sc-secondary"></div>
+    </div>
+
+    <div class="q">
+      <b data-vi="Bạn nạp hay rút niềm tin cho họ?" data-en="Do you deposit into their account, or withdraw?"></b>
+      <span data-vi="Theo cảm nhận thật của bạn, không phải đáp án đúng." data-en="Your honest read — not a right answer."></span>
+    </div>
+
+    <div class="choices">
+      <button class="choice dep" onclick="answer('up')">
+        <span class="glyph">▲</span>
+        <span class="lbl"><span data-vi="Nạp niềm tin" data-en="Deposit trust"></span>
+          <small data-vi="Tôi tin người này hơn" data-en="I trust this person more"></small></span>
+        <span class="amt">+10</span>
+      </button>
+      <button class="choice wit" onclick="answer('down')">
+        <span class="glyph">▼</span>
+        <span class="lbl"><span data-vi="Rút niềm tin" data-en="Withdraw trust"></span>
+          <small data-vi="Tôi tin người này ít đi" data-en="I trust this person less"></small></span>
+        <span class="amt">−10</span>
+      </button>
+    </div>
+    <button class="backlink" id="undo" onclick="undo()" data-vi="↺ Sửa lựa chọn trước" data-en="↺ Change my last answer"></button>
+  </section>
+
+  <!-- ============ STATEMENT ============ -->
+  <section id="s-statement" class="screen">
+    <div class="eyebrow" data-vi="Sao kê giao dịch" data-en="Transaction log"></div>
+    <h2 style="margin-top:8px" data-vi="Sổ của bạn đã chốt." data-en="Your book is closed."></h2>
+
+    <div class="receipt">
+      <div class="rc-title" data-vi="Ngân hàng Niềm tin · Sao kê" data-en="The Trust Bank · Statement"></div>
+      <div class="rc-name" id="rc-name">—</div>
+      <div class="rc-sub" data-vi="Người thực hiện giao dịch" data-en="Transactions made by"></div>
+      <div class="dashed"></div>
+      <div id="rc-lines"></div>
+      <div class="rc-total">
+        <span>
+          <span style="font-weight:600" data-vi="Tổng phiên" data-en="Session total"></span>
+          <em style="display:block;font-style:normal;font-size:11px;color:var(--muted)" id="rc-split"></em>
+        </span>
+        <b id="rc-total">0</b>
+      </div>
+      <div class="rc-foot" id="rc-foot">— · —</div>
+    </div>
+
+    <button class="btn" style="margin-top:22px" onclick="go('reveal')">
+      <span data-vi="Xem góc nhìn tham khảo" data-en="See the reference view"></span>
+    </button>
+  </section>
+
+  <!-- ============ REFERENCE VIEW ============ -->
+  <section id="s-reveal" class="screen">
+    <div class="eyebrow" data-vi="Góc nhìn tham khảo" data-en="Reference view"></div>
+    <h2 style="margin-top:8px" data-vi="Không phải đáp án đúng." data-en="Not a right answer."></h2>
+    <p class="sub-lang" style="margin-top:10px" data-vi="Đây là cách đọc từng tình huống theo nguyên tắc niềm tin (Trust Equation), do ban huấn luyện đặt ra. Bạn chọn khác? Giữ lý do của bạn — nhóm cần nghe." data-en="This is how each situation reads through the Trust Equation, set by the training team. Chose differently? Keep your reason — the group needs to hear it."></p>
+
+    <div id="rv-list"></div>
+
+    <button class="btn" style="margin-top:20px" onclick="go('disc')">
+      <span data-vi="Câu hỏi chiêm nghiệm" data-en="Reflection questions"></span>
+    </button>
+  </section>
+
+  <!-- ============ DISCUSSION ============ -->
+  <section id="s-disc" class="screen">
+    <div class="eyebrow" data-vi="Thảo luận" data-en="Discussion"></div>
+    <h2 style="margin-top:8px" data-vi="Cùng nhìn lại." data-en="Look back together."></h2>
+
+    <div class="disc">
+      <ol>
+        <li><span data-vi="Cảm nhận sau hoạt động?" data-en="How did that activity feel?"></span></li>
+        <li><span data-vi="Tình huống nào khiến nhóm của bạn phân vân? Lý do? Cách ra quyết định cho tình huống đó?" data-en="Which situation left your group hesitating? Why? How did you decide in the end?"></span></li>
+        <li><span data-vi="Nhóm bạn thấy đặc điểm chung của những tình huống “cộng niềm tin” và “trừ niềm tin” là gì?" data-en="What do the trust-adding situations have in common? And the trust-subtracting ones?"></span></li>
+        <li><span data-vi="Có bao nhiêu tình huống đạt đồng thuận 100%? Bao nhiêu tình huống bất đồng? Ai là người chốt quyết định trong nhóm của bạn?" data-en="How many situations had 100% agreement? How many split? Who ended up making the call in your group?"></span></li>
+      </ol>
+    </div>
+
+    <button class="btn ghost" style="margin-top:16px" onclick="restart()">
+      <span data-vi="Chơi lại" data-en="Play again"></span>
+    </button>
+  </section>
+
+</div>
+
+<div class="stamp" id="stamp"><div class="stamp-inner">
+  <div class="stamp-amt" id="stamp-amt">+10</div>
+  <div class="stamp-txt" id="stamp-txt">ĐÃ GHI NHẬN · RECORDED</div>
+</div></div>
+
+<button class="fac-open" onclick="openFac()" title="Facilitator">GV</button>
+<div class="fac" id="fac">
+  <div class="wrap">
+    <div class="topbar">
+      <div class="mark"><div class="mark-glyph">₮</div><div class="mark-name">Bảng của giảng viên<br>Facilitator panel</div></div>
+      <button class="btn ghost" style="width:auto;padding:7px 16px" onclick="closeFac()">✕</button>
+    </div>
+
+    <h3>Chốt khung trước khi chơi</h3>
+    <p>“Mỗi người mình làm việc cùng đều có một <b>tài khoản niềm tin</b> mang tên họ, do chính mình nắm giữ. Không ai mở tài khoản đó bằng lời hứa — nó chỉ tăng hoặc giảm qua từng hành vi nhỏ. Sáu tình huống sau, mình là người quyết định nạp hay rút.”</p>
+
+    <h3>Chạy hoạt động · Run sheet</h3>
+    <table>
+      <tr><th>Phút</th><th>Việc</th></tr>
+      <tr><td>0–2</td><td>Quét QR, nhập tên, đọc khung Ngân hàng Niềm tin. Nhắc học viên <b>mở âm lượng</b> (iPhone: gạt nút im lặng).</td></tr>
+      <tr><td>2–6</td><td>Cá nhân chơi 6 tình huống. GV không gợi ý đúng/sai.</td></tr>
+      <tr><td>6–9</td><td>Xem sao kê + góc nhìn tham khảo trên máy mình.</td></tr>
+      <tr><td>9–18</td><td>Thảo luận 4 câu chiêm nghiệm ở màn hình cuối. Đào sâu <b>tình huống bất đồng</b> trước.</td></tr>
+      <tr><td>18–20</td><td>Chốt: niềm tin là số dư tích lũy từ hành vi nhỏ, không phải từ tuyên bố.</td></tr>
+    </table>
+
+    <h3>Góc nhìn tham khảo · Key</h3>
+    <p style="color:var(--muted)">Đáp án tham chiếu do ban huấn luyện đặt theo Trust Equation, <b>không</b> phải dữ liệu tổng hợp từ người chơi.</p>
+    <table id="fac-key"></table>
+
+    <h3>Điểm dễ tranh luận</h3>
+    <ul>
+      <li><b>TH 1</b> — nhiều người chọn “nạp” vì “trễ chút cũng được”. Đào: có <em>báo trước</em> không? Cam kết nhỏ bị bỏ qua nhiều lần chính là cách số dư âm dần.</li>
+      <li><b>TH 2</b> — có người thấy “sai là mất uy tín”. Đào: mất uy tín là do <em>giấu</em>, hay do <em>sai rồi tự sửa ngay</em>?</li>
+      <li><b>TH 4</b> — có nhóm bảo “tìm nguyên nhân là đúng quy trình”. Đào: đúng, nhưng <em>trước hay sau</em> khi chặn thiệt hại? Và tìm nguyên nhân hay tìm người?</li>
+      <li><b>TH 5</b> — “dễ tính” nghe rất tích cực. Đào: khi ai cũng đồng ý, lời “đồng ý” còn giá trị thông tin gì?</li>
+    </ul>
+
+    <h3>Câu chốt gợi ý</h3>
+    <p>“Không ai trong phòng này mất niềm tin vì một sự cố lớn. Số dư tụt vì những giao dịch −10 nhỏ mà mình không để ý là mình đang thực hiện.”</p>
+    <div style="height:40px"></div>
+  </div>
+</div>
+
+<script>
+/* ---------------- 6 tình huống ---------------- */
+const S = [
+ {
+  whoVi:"Đồng nghiệp hẹn phản hồi", whoEn:"The colleague who promised a reply",
+  lensVi:"Đáng tin cậy", lensEn:"Reliability",
+  vi:"Đồng nghiệp hẹn phản hồi thông tin trong ngày nhưng đến 9h sáng hôm sau mới trả lời, không có báo trước.",
+  en:"A colleague promises to reply within the day, but only responds at 9am the next morning, with no heads-up.",
+  ref:"down",
+  whyVi:"Trễ một buổi thì nhỏ. Cái bị rút là <b>lời hẹn</b>: bạn đã sắp xếp công việc dựa trên nó. Một tin nhắn báo trước 30 giây là đủ giữ nguyên số dư.",
+  whyEn:"Half a day late is small. What gets withdrawn is <b>the promise</b>: you planned around it. A 30-second heads-up would have kept the balance intact."
+ },
+ {
+  whoVi:"Đồng nghiệp gửi email báo cáo", whoEn:"The colleague who sent the report",
+  lensVi:"Uy tín", lensEn:"Credibility",
+  vi:"Sau khi gửi email báo cáo, đồng nghiệp phát hiện 1 thông tin chưa chính xác nên lập tức tự thu hồi và gửi lại email mới đầy đủ hơn.",
+  en:"After sending a report by email, a colleague spots one inaccurate piece of information, immediately recalls it and resends a fuller, corrected email.",
+  ref:"up",
+  whyVi:"Người ta không tin người <b>không bao giờ sai</b> — người đó không tồn tại. Người ta tin người <b>tự phát hiện và tự sửa trước khi bị hỏi</b>.",
+  whyEn:"Nobody trusts the person who is <b>never wrong</b> — that person doesn't exist. People trust the one who <b>catches it and fixes it before being asked</b>."
+ },
+ {
+  whoVi:"Team leader", whoEn:"The team leader",
+  lensVi:"Hướng về người khác", lensEn:"Low self-orientation",
+  vi:"Sau khi đại diện team báo cáo và chịu trách nhiệm tổng thể trong một workstream, team leader công khai ghi nhận từng thành viên với từng đóng góp cụ thể.",
+  en:"After representing the team in the report and taking overall accountability for a workstream, the team leader publicly credits each member for their specific contribution.",
+  ref:"up",
+  whyVi:"Nhận trách nhiệm về mình, chia công lao ra ngoài. Đây là hành vi tốn kém nhất, và vì vậy là khoản nạp <b>lớn nhất</b>.",
+  whyEn:"Absorb the accountability, hand out the credit. It is the most costly behaviour here, which is exactly why it is the <b>largest deposit</b>."
+ },
+ {
+  whoVi:"Các team liên quan", whoEn:"The teams involved",
+  lensVi:"An toàn tâm lý", lensEn:"Psychological safety",
+  vi:"Một sự cố phát sinh trong dự án, các team liên quan tìm cách xác định lỗi xuất phát từ đâu thay vì tìm giải pháp khắc phục trước.",
+  en:"An incident hits the project. The teams involved work on pinning down where the fault came from, instead of looking for a fix first.",
+  ref:"down",
+  whyVi:"Truy nguyên nhân là cần thiết — nhưng <b>sau khi</b> chặn thiệt hại. Khi phản xạ đầu tiên là tìm lỗi, lần sau sẽ không ai dám báo sự cố sớm.",
+  whyEn:"Root cause matters — <b>after</b> the bleeding stops. When the first reflex is to locate the fault, next time nobody raises the flag early."
+ },
+ {
+  whoVi:"Đồng nghiệp trong team", whoEn:"A teammate",
+  lensVi:"Uy tín", lensEn:"Credibility",
+  vi:"Trong team có một đồng nghiệp dễ tính, ai nói gì hay phản hồi nào cũng đồng ý, miễn là xong chuyện.",
+  en:"One teammate is very easy-going: whatever is said, whatever the feedback, they agree — as long as the matter is closed.",
+  ref:"down",
+  whyVi:"Dễ chịu thì có, đáng tin thì chưa. Khi một người đồng ý với mọi thứ, lời “đồng ý” của họ <b>mất hết giá trị thông tin</b> — bạn không còn biết khi nào là thật.",
+  whyEn:"Pleasant, yes. Trustworthy, not yet. When someone agrees with everything, their yes <b>carries no information</b> — you can no longer tell when they mean it."
+ },
+ {
+  whoVi:"Đồng nghiệp đề xuất lùi deadline", whoEn:"The colleague asking to move the deadline",
+  lensVi:"Đáng tin cậy", lensEn:"Reliability",
+  vi:"Trong 1 dự án khá gấp, một đồng nghiệp đề xuất lùi deadline 2 ngày và xin thêm resource hỗ trợ cho task của cô ấy sau khi cân nhắc workload và thời gian phản hồi phù hợp từ các stakeholder.",
+  en:"In a fairly urgent project, a colleague proposes moving the deadline by 2 days and asks for extra resource on her task, after weighing the workload and the realistic response times of stakeholders.",
+  ref:"up",
+  whyVi:"Dự án càng gấp, im lặng rồi trễ càng đắt. Tái cam kết <b>sớm và có cơ sở</b> là cách người này bảo vệ độ tin cậy của chính lời hứa mới.",
+  whyEn:"The tighter the project, the more expensive silence-then-slip becomes. Renegotiating <b>early and with reasoning</b> is how she protects the reliability of the new promise."
+ }
+];
+
+/* ---------------- state ---------------- */
+let lang="vi", idx=0, ans=[], holder="", sound=true, ac=null, unlocked=false;
+
+/* ---------------- SOUND ----------------
+   Tiếng "ting" được tổng hợp thành file WAV ngay trong trình duyệt,
+   phát bằng thẻ <audio> (chạy được cả trên iOS), có dự phòng Web Audio. */
+function buildWav(freqs, gaps){
+  const sr=22050, dur=0.85, n=Math.floor(sr*dur);
+  const pcm=new Int16Array(n);
+  for(let i=0;i<n;i++){
+    const t=i/sr; let v=0;
+    for(let k=0;k<freqs.length;k++){
+      const st=gaps[k];
+      if(t>=st){
+        const dt=t-st;
+        v += Math.sin(2*Math.PI*freqs[k]*dt)*Math.exp(-dt*5.5)*0.42;
+        v += Math.sin(2*Math.PI*freqs[k]*2*dt)*Math.exp(-dt*9)*0.12;
+      }
+    }
+    v=Math.max(-1,Math.min(1,v));
+    pcm[i]=v*32767;
+  }
+  const bytes=new Uint8Array(44+pcm.length*2);
+  const dv=new DataView(bytes.buffer);
+  function str(o,s){ for(let i=0;i<s.length;i++) dv.setUint8(o+i,s.charCodeAt(i)); }
+  str(0,"RIFF"); dv.setUint32(4,36+pcm.length*2,true); str(8,"WAVEfmt ");
+  dv.setUint32(16,16,true); dv.setUint16(20,1,true); dv.setUint16(22,1,true);
+  dv.setUint32(24,sr,true); dv.setUint32(28,sr*2,true); dv.setUint16(32,2,true); dv.setUint16(34,16,true);
+  str(36,"data"); dv.setUint32(40,pcm.length*2,true);
+  for(let i=0;i<pcm.length;i++) dv.setInt16(44+i*2,pcm[i],true);
+  let bin=""; const chunk=8192;
+  for(let i=0;i<bytes.length;i+=chunk) bin+=String.fromCharCode.apply(null,bytes.subarray(i,i+chunk));
+  return "data:audio/wav;base64,"+btoa(bin);
+}
+
+const AUD={};
+try{
+  AUD.up=new Audio(buildWav([1174.66,1567.98],[0,0.10]));    // ting-ting đi lên
+  AUD.down=new Audio(buildWav([783.99,523.25],[0,0.10]));    // ting-ting đi xuống
+  AUD.up.preload="auto"; AUD.down.preload="auto";
+}catch(e){}
+
+function unlockAudio(){
+  if(unlocked) return;
+  unlocked=true;
+  try{
+    ac = ac || new (window.AudioContext||window.webkitAudioContext)();
+    if(ac.state==="suspended") ac.resume();
+  }catch(e){}
+  ["up","down"].forEach(k=>{
+    const a=AUD[k]; if(!a) return;
+    a.volume=0;
+    const p=a.play();
+    if(p&&p.then) p.then(()=>{a.pause();a.currentTime=0;a.volume=1;}).catch(()=>{a.volume=1;});
+    else { a.pause(); a.currentTime=0; a.volume=1; }
+  });
+}
+
+function beep(dir){
+  try{
+    ac = ac || new (window.AudioContext||window.webkitAudioContext)();
+    if(ac.state==="suspended") ac.resume();
+    const t0=ac.currentTime;
+    const notes = dir==="up" ? [1174.66,1567.98] : [783.99,523.25];
+    notes.forEach((f,i)=>{
+      const s=t0+i*0.10;
+      const o=ac.createOscillator(), g=ac.createGain();
+      o.type="sine"; o.frequency.setValueAtTime(f,s);
+      g.gain.setValueAtTime(0.0001,s);
+      g.gain.exponentialRampToValueAtTime(0.3,s+0.012);
+      g.gain.exponentialRampToValueAtTime(0.0001,s+0.6);
+      o.connect(g); g.connect(ac.destination);
+      o.start(s); o.stop(s+0.65);
+    });
+  }catch(e){}
+}
+
+function ting(dir){
+  if(!sound) return;
+  const a=AUD[dir];
+  if(a){
+    try{
+      a.currentTime=0;
+      const p=a.play();
+      if(p&&p.catch) p.catch(()=>beep(dir));
+      return;
+    }catch(e){}
+  }
+  beep(dir);
+}
+
+function toggleSound(){
+  sound=!sound;
+  document.getElementById("snd").textContent = sound?"🔊":"🔇";
+  document.getElementById("snd").classList.toggle("off",!sound);
+  if(sound){ unlockAudio(); ting("up"); }
+}
+
+/* ---------------- language ---------------- */
+function setLang(l){
+  lang=l;
+  document.documentElement.lang=l;
+  document.getElementById("btn-vi").classList.toggle("on",l==="vi");
+  document.getElementById("btn-en").classList.toggle("on",l==="en");
+  document.querySelectorAll("[data-vi]").forEach(el=>{ el.innerHTML=el.getAttribute("data-"+l); });
+  document.getElementById("name").placeholder = l==="vi" ? "Tên của bạn / Your name" : "Your name / Tên của bạn";
+  document.getElementById("stamp-txt").textContent = l==="vi" ? "ĐÃ GHI NHẬN · RECORDED" : "RECORDED · ĐÃ GHI NHẬN";
+  document.getElementById("sc-ownerlabel").textContent = l==="vi" ? "Tài khoản niềm tin của" : "Trust account of";
+  if(document.getElementById("s-play").classList.contains("active") && idx<S.length) paint();
+  if(document.getElementById("s-statement").classList.contains("active")) buildStatement();
+  if(document.getElementById("s-reveal").classList.contains("active")) buildReveal();
+}
+
+function go(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  document.getElementById("s-"+id).classList.add("active");
+  window.scrollTo(0,0);
+  if(id==="statement") buildStatement();
+  if(id==="reveal") buildReveal();
+}
+
+function startPlay(){
+  const v=document.getElementById("name").value.trim();
+  holder = v || (lang==="vi"?"Người chơi ẩn danh":"Anonymous player");
+  document.getElementById("acc-holder").textContent=holder;
+  idx=0; ans=[];
+  go("play"); paint();
+}
+
+function balance(){ return ans.reduce((t,a)=>t+(a==="up"?10:-10),0); }
+function fmt(n){ return (n>0?"+":"")+n; }
+function code(i){ return (lang==="vi"?"TK·":"ACC·")+String(i+1).padStart(2,"0"); }
+
+function paint(){
+  const s=S[idx];
+  document.getElementById("sc-code").textContent=code(idx);
+  document.getElementById("sc-lens").textContent = lang==="vi"? s.lensVi : s.lensEn;
+  document.getElementById("sc-owner").textContent = lang==="vi"? s.whoVi : s.whoEn;
+  document.getElementById("sc-primary").textContent = lang==="vi"? s.vi : s.en;
+  document.getElementById("sc-secondary").textContent = lang==="vi"? s.en : s.vi;
+  document.getElementById("bal").textContent = fmt(balance());
+  document.getElementById("undo").style.visibility = ans.length? "visible":"hidden";
+
+  const t=document.getElementById("ticks"); t.innerHTML="";
+  for(let i=0;i<S.length;i++){
+    const d=document.createElement("div");
+    d.className="tick"+(ans[i]?(" "+ans[i]):"")+(i===idx?" now":"");
+    t.appendChild(d);
+  }
+}
+
+function answer(v){
+  ans[idx]=v;
+  ting(v);
+  const st=document.getElementById("stamp");
+  document.getElementById("stamp-amt").textContent = v==="up"?"+10":"−10";
+  st.classList.add("on");
+  const b=document.getElementById("bal");
+  b.textContent=fmt(balance());
+  b.classList.remove("bump"); void b.offsetWidth; b.classList.add("bump");
+  document.getElementById("ticks").children[idx].className="tick "+v;
+  setTimeout(()=>{
+    st.classList.remove("on");
+    idx++;
+    if(idx>=S.length){ go("statement"); }
+    else { paint(); window.scrollTo(0,0); }
+  },680);
+}
+
+function undo(){
+  if(!ans.length) return;
+  if(idx>0) idx--;
+  ans.length=idx;
+  paint();
+}
+
+function buildStatement(){
+  document.getElementById("rc-name").textContent=holder;
+  const box=document.getElementById("rc-lines"); box.innerHTML="";
+  ans.forEach((a,i)=>{
+    const s=S[i];
+    const row=document.createElement("div");
+    row.className="rc-line";
+    row.innerHTML='<span class="n">'+String(i+1).padStart(2,"0")+'</span>'+
+      '<span class="d">'+ (lang==="vi"? s.whoVi : s.whoEn) +
+      '<em>'+ (lang==="vi"? s.lensVi : s.lensEn) +'</em></span>'+
+      '<span class="v '+(a==="up"?"up":"down")+'">'+(a==="up"?"▲ +10":"▼ −10")+'</span>';
+    box.appendChild(row);
+  });
+  const up=ans.filter(a=>a==="up").length;
+  document.getElementById("rc-total").textContent=fmt(balance());
+  document.getElementById("rc-split").textContent = lang==="vi"
+    ? up+" lần nạp · "+(S.length-up)+" lần rút"
+    : up+" deposits · "+(S.length-up)+" withdrawals";
+  document.getElementById("rc-foot").textContent = lang==="vi"
+    ? "NGÂN HÀNG NIỀM TIN · KHÔNG CÓ SỐ DƯ ĐÚNG"
+    : "THE TRUST BANK · THERE IS NO CORRECT BALANCE";
+}
+
+function buildReveal(){
+  const list=document.getElementById("rv-list"); list.innerHTML="";
+  S.forEach((s,i)=>{
+    const el=document.createElement("div");
+    el.className="rv";
+    const refLbl = s.ref==="up"
+      ? (lang==="vi"?"▲ Nạp niềm tin":"▲ Deposit")
+      : (lang==="vi"?"▼ Rút niềm tin":"▼ Withdraw");
+    el.innerHTML=
+      '<div class="rv-top"><span class="rv-n">'+code(i)+'</span></div>'+
+      '<div class="rv-txt">'+(lang==="vi"?s.vi:s.en)+'</div>'+
+      '<div class="pill-row"><span class="pill">'+refLbl+'</span>'+
+        '<span class="pill hollow">'+(lang==="vi"?s.lensVi:s.lensEn)+'</span></div>'+
+      '<div class="rv-why">'+(lang==="vi"?s.whyVi:s.whyEn)+'</div>';
+    list.appendChild(el);
+  });
+}
+
+function openFac(){
+  const t=document.getElementById("fac-key");
+  t.innerHTML="<tr><th>TH</th><th>Yếu tố</th><th>Tham chiếu</th></tr>";
+  S.forEach((s,i)=>{
+    const r=document.createElement("tr");
+    r.innerHTML="<td>"+(i+1)+"</td><td>"+s.lensVi+"</td><td class='"+(s.ref==="up"?"key-up":"key-down")+"'>"+
+      (s.ref==="up"?"▲ Nạp":"▼ Rút")+"</td>";
+    t.appendChild(r);
+  });
+  document.getElementById("fac").classList.add("on");
+}
+function closeFac(){ document.getElementById("fac").classList.remove("on"); }
+
+function restart(){ idx=0; ans=[]; go("cover"); }
+
+document.addEventListener("touchstart",unlockAudio,{once:true,passive:true});
+document.addEventListener("click",unlockAudio,{once:true});
+setLang("vi");
+</script>
+</body>
+</html>
